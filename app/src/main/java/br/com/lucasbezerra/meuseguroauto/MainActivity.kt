@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import br.com.lucasbezerra.meuseguroauto.databinding.ActivityMainBinding
@@ -23,13 +24,25 @@ class MainActivity : AppCompatActivity() {
         setUpSeekBar()
 
         binding.btSend.setOnClickListener{
-            send()
+            if(!checkConstraints()){
+                alert()
+            } else {
+                send()
+            }
         }
 
         binding.btBack.setOnClickListener{
             back()
         }
 
+    }
+
+    private fun alert() {
+        val text = "Marque todas as opções obrigatórias!"
+        val duration = Toast.LENGTH_SHORT
+
+        val toast = Toast.makeText(this, text, duration)
+        toast.show()
     }
 
     private fun setUpSeekBar() {
@@ -52,6 +65,13 @@ class MainActivity : AppCompatActivity() {
                 // Pode ser usado para salvar o valor quando o usuário soltar o
             }
         })
+    }
+
+    private fun checkConstraints(): Boolean {
+        val name = binding.etName.text.toString()
+        val rgCoverage = findViewById<RadioButton>(binding.rgCoverage.checkedRadioButtonId)
+        val cbAcceptTerms = binding.cbAcceptTerms.isChecked
+        return !(name.isBlank() or !rgCoverage.isChecked or !cbAcceptTerms)
     }
 
     private fun send() {
